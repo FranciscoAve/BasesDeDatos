@@ -1,7 +1,9 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
+from tkinter import messagebox
 import mysql.connector
 from datetime import datetime
+
 
 
 class EventosApp:
@@ -13,7 +15,7 @@ class EventosApp:
         self.conexion = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="sucontraseña >:c", #la contraseña de uds
+            password="root",  # la contraseña de uds
             database="g07",
             autocommit=False
         )
@@ -35,43 +37,76 @@ class EventosApp:
         self.valor_var = tk.StringVar()
 
         # Crear campos de entrada
-        ttk.Label(self.frame, text="Código:").grid(row=0, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.codigo_var).grid(row=0, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Código:", font=("Arial", 10, "bold")).grid(row=0, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.codigo_var, font=("Arial", 10), width=20).grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Fecha (YYYY-MM-DD):").grid(row=1, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.fecha_var).grid(row=1, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Fecha (YYYY-MM-DD):", font=("Arial", 10, "bold")).grid(row=1, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.fecha_var, font=("Arial", 10), width=20).grid(row=1, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Ubicación:").grid(row=2, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.ubicacion_var).grid(row=2, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Ubicación:", font=("Arial", 10, "bold")).grid(row=2, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.ubicacion_var, font=("Arial", 10), width=20).grid(row=2, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Temática:").grid(row=3, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.tematica_var).grid(row=3, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Temática:", font=("Arial", 10, "bold")).grid(row=3, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.tematica_var, font=("Arial", 10), width=20).grid(row=3, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Descripción:").grid(row=4, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.descripcion_var).grid(row=4, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Descripción:", font=("Arial", 10, "bold")).grid(row=4, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.descripcion_var, font=("Arial", 10), width=20).grid(row=4, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Valor Total:").grid(row=5, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.valor_var).grid(row=5, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Valor Total:", font=("Arial", 10, "bold")).grid(row=5, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.valor_var, font=("Arial", 10), width=20).grid(row=5, column=1, padx=5, pady=5)
 
-        # Botones CRUD
-        ttk.Button(self.frame, text="Crear", command=self.crear_evento).grid(row=6, column=0, pady=10)
-        ttk.Button(self.frame, text="Buscar", command=self.buscar_evento).grid(row=6, column=1, pady=10)
-        ttk.Button(self.frame, text="Actualizar", command=self.actualizar_evento).grid(row=6, column=2, pady=10)
-        ttk.Button(self.frame, text="Eliminar", command=self.eliminar_evento).grid(row=6, column=3, pady=10)
+        # Botones CRUD alineados a la derecha de los campos de entrada
+        self.create_button = ttk.Button(self.frame, text="Crear", command=self.crear_evento, style="TButton")
+        self.create_button.grid(row=0, column=2, padx=10, pady=5)
+
+        self.search_button = ttk.Button(self.frame, text="Buscar", command=self.buscar_evento, style="TButton")
+        self.search_button.grid(row=1, column=2, padx=10, pady=5)
+
+        self.update_button = ttk.Button(self.frame, text="Actualizar", command=self.actualizar_evento, style="TButton")
+        self.update_button.grid(row=2, column=2, padx=10, pady=5)
+
+        self.delete_button = ttk.Button(self.frame, text="Eliminar", command=self.eliminar_evento, style="TButton")
+        self.delete_button.grid(row=3, column=2, padx=10, pady=5)
+
+        # Estilo de los botones
+        style = ttk.Style()
+        style.configure("TButton",
+                        font=("Arial", 10, "bold"),
+                        relief="raised",
+                        padding=10,
+                        width=12)
+        style.configure("TButton:hover",
+                        background="#4CAF50",
+                        foreground="white")
+        style.configure("TButton:active",
+                        background="#45a049",
+                        foreground="white")
 
         # Botones de control de transacción
-        ttk.Button(self.frame, text="Guardar Cambios", command=self.commit_cambios,
-                   style='Accent.TButton').grid(row=7, column=0, columnspan=2, pady=10)
-        ttk.Button(self.frame, text="Descartar Cambios", command=self.descartar_cambios,
-                   style='Accent.TButton').grid(row=7, column=2, columnspan=2, pady=10)
+        self.save_button = ttk.Button(self.frame, text="Guardar Cambios", command=self.commit_cambios,
+                                      style='Accent.TButton')
+        self.save_button.grid(row=7, column=0, columnspan=2, pady=10, sticky="ew")
+
+        self.discard_button = ttk.Button(self.frame, text="Descartar Cambios", command=self.descartar_cambios,
+                                         style='Accent.TButton')
+        self.discard_button.grid(row=7, column=2, columnspan=2, pady=10, sticky="ew")
+
+        # Estilo de los botones de acción
+        style.configure("Accent.TButton",
+                        font=("Arial", 12, "bold"),
+                        background="#008CBA",
+                        foreground="white",
+                        padding=15)
+        style.map("Accent.TButton",
+                  background=[("active", "#006f8f")])
 
         # Tabla de eventos
         self.tree = ttk.Treeview(self.frame,
                                  columns=("Código", "Fecha", "Ubicación", "Temática", "Descripción", "Valor"),
                                  show="headings")
-        self.tree.grid(row=8, column=0, columnspan=4, pady=10)
+        self.tree.grid(row=8, column=0, columnspan=4, pady=10, sticky="nsew")
 
-        # Configurar columnas
+        # Configurar columnas de la tabla
         self.tree.heading("Código", text="Código")
         self.tree.heading("Fecha", text="Fecha")
         self.tree.heading("Ubicación", text="Ubicación")
@@ -81,7 +116,7 @@ class EventosApp:
 
         # Etiqueta de modo temporal
         ttk.Label(self.frame, text="MODO TEMPORAL - Los cambios no se guardarán hasta que presiones 'Guardar Cambios'",
-                  foreground='red').grid(row=9, column=0, columnspan=4)
+                  foreground='red', font=("Arial", 10, "italic")).grid(row=9, column=0, columnspan=4)
 
         # Cargar datos iniciales
         self.actualizar_tabla()
@@ -125,14 +160,18 @@ class EventosApp:
         self.descripcion_var.set("")
         self.valor_var.set("")
 
-    def actualizar_tabla(self):
+    def actualizar_tabla(self, eventos=None):
         # Limpiar tabla
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        # Obtener y mostrar datos
-        self.cursor.execute("SELECT * FROM Evento")
-        for evento in self.cursor.fetchall():
+        # Si no se pasan eventos, traer todos
+        if eventos is None:
+            self.cursor.execute("SELECT * FROM Evento")
+            eventos = self.cursor.fetchall()
+
+        # Mostrar los datos
+        for evento in eventos:
             self.tree.insert("", "end", values=evento)
 
     def crear_evento(self):
@@ -158,14 +197,9 @@ class EventosApp:
         codigo = self.codigo_var.get()
         try:
             self.cursor.execute("SELECT * FROM Evento WHERE codigo = %s", (codigo,))
-            evento = self.cursor.fetchone()
-            if evento:
-                self.codigo_var.set(evento[0])
-                self.fecha_var.set(evento[1])
-                self.ubicacion_var.set(evento[2])
-                self.tematica_var.set(evento[3])
-                self.descripcion_var.set(evento[4])
-                self.valor_var.set(evento[5])
+            eventos = self.cursor.fetchall()
+            if eventos:
+                self.actualizar_tabla(eventos)  # Solo mostrar resultados de la búsqueda
             else:
                 messagebox.showinfo("Búsqueda", "No se encontró el evento")
         except mysql.connector.Error as err:
