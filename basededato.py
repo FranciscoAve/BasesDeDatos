@@ -4,8 +4,42 @@ from tkinter import messagebox
 import mysql.connector
 from datetime import datetime
 
+# Clase de la interfaz de inicio
+class InicioApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Sistema de Gestión de Eventos - Inicio")
 
+        # Frame principal
+        self.frame = ttk.Frame(self.root, padding="10")
+        self.frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
+        # Título
+        ttk.Label(self.frame, text="Bienvenido al Sistema de Gestión de Eventos",
+                  font=("Arial", 18, "bold"), anchor="center").grid(row=0, column=0, columnspan=2, pady=20)
+
+        # Botón para acceder al sistema
+        self.acceder_button = ttk.Button(self.frame, text="Acceder al Sistema", command=self.abrir_sistema)
+        self.acceder_button.grid(row=1, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Salir
+        self.salir_button = ttk.Button(self.frame, text="Salir", command=self.root.quit)
+        self.salir_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+
+        # Imagen de fondo (opcional, puede agregar una imagen si desea)
+
+        # Configuración del estilo
+        style = ttk.Style()
+        style.configure("TButton", font=("Arial", 12, "bold"), padding=10, width=20)
+
+    def abrir_sistema(self):
+        # Cerrar ventana de inicio y abrir el sistema principal
+        self.root.destroy()
+        main_root = tk.Tk()
+        EventosApp(main_root)
+        main_root.mainloop()
+
+# Clase principal del sistema (mantener intacta)
 class EventosApp:
     def __init__(self, root):
         self.root = root
@@ -36,7 +70,8 @@ class EventosApp:
         self.descripcion_var = tk.StringVar()
         self.valor_var = tk.StringVar()
 
-        # Crear campos de entrada
+
+
         # Crear campos de entrada
         ttk.Label(self.frame, text="Código:", font=("Times New Roman", 12, "bold")).grid(row=0, column=0, sticky=tk.W)
         ttk.Entry(self.frame, textvariable=self.codigo_var, font=("Times New Roman", 12), width=20).grid(row=0, column=1, padx=5, pady=5)
@@ -55,6 +90,7 @@ class EventosApp:
 
         ttk.Label(self.frame, text="Valor Total:", font=("Times New Roman", 12, "bold")).grid(row=5, column=0, sticky=tk.W)
         ttk.Entry(self.frame, textvariable=self.valor_var, font=("Times New Roman", 12), width=20).grid(row=5, column=1, padx=5, pady=5)
+
 
 
         # Botones CRUD alineados a la derecha de los campos de entrada
@@ -100,7 +136,7 @@ class EventosApp:
                         foreground="white",
                         padding=15)
         style.map("Accent.TButton",
-                  background=[("active", "#006f8f")])
+                  background=[["active", "#006f8f"]])
 
         # Tabla de eventos
         self.tree = ttk.Treeview(self.frame,
@@ -178,7 +214,7 @@ class EventosApp:
 
     def crear_evento(self):
         try:
-            sql = """INSERT INTO Evento (codigo, fecha, ubicacion, tematica, descripcion, valorTotal) 
+            sql = """INSERT INTO Evento (codigo, fecha, ubicacion, tematica, descripcion, valorTotal) \
                      VALUES (%s, %s, %s, %s, %s, %s)"""
             valores = (
                 self.codigo_var.get(),
@@ -209,7 +245,7 @@ class EventosApp:
 
     def actualizar_evento(self):
         try:
-            sql = """UPDATE Evento SET fecha = %s, ubicacion = %s, tematica = %s, 
+            sql = """UPDATE Evento SET fecha = %s, ubicacion = %s, tematica = %s, \
                      descripcion = %s, valorTotal = %s WHERE codigo = %s"""
             valores = (
                 self.fecha_var.get(),
@@ -250,5 +286,6 @@ class EventosApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = EventosApp(root)
+    app = InicioApp(root)
     root.mainloop()
+    
