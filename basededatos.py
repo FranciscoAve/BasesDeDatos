@@ -9,50 +9,66 @@ class InicioApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Sistema de Gestión de Eventos - Inicio")
+        self.success = False
 
         # Frame principal
-        self.frame = ttk.Frame(self.root, padding="10")
+        self.frame = ttk.Frame(self.root, padding="20")
         self.frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
+        # Variables para conexión
+        self.host_var = tk.StringVar(value="localhost")
+        self.user_var = tk.StringVar()
+        self.password_var = tk.StringVar()
+
         # Título
-        ttk.Label(self.frame, text="Bienvenido al Sistema de Gestión de Eventos",
-                  font=("Arial", 18, "bold"), anchor="center").grid(row=0, column=0, columnspan=2, pady=20)
+        ttk.Label(self.frame, text="Bienvenido al Sistema de Gestión de Eventos",font=("Arial", 18, "bold"), anchor="center").grid(row=0, column=0, columnspan=2, pady=20)
 
-        # Botón para acceder al sistema
-        self.acceder_button = ttk.Button(self.frame, text="Acceder al Sistema", command=self.abrir_sistema)
-        self.acceder_button.grid(row=1, column=0, columnspan=2, pady=10, sticky="ew")
+        # Campos de conexión
+        ttk.Label(self.frame, text="Host:", font=("Arial", 12)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(self.frame, textvariable=self.host_var, font=("Arial", 12), width=30).grid(row=1, column=1, padx=5, pady=5)
 
-        # Salir
-        self.salir_button = ttk.Button(self.frame, text="Salir", command=self.root.quit)
-        self.salir_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+        ttk.Label(self.frame, text="Usuario:", font=("Arial", 12)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(self.frame, textvariable=self.user_var, font=("Arial", 12), width=30).grid(row=2, column=1, padx=5,pady=5)
 
-        # Imagen de fondo (opcional, puede agregar una imagen si desea)
+        ttk.Label(self.frame, text="Contraseña:", font=("Arial", 12)).grid(row=3, column=0, sticky=tk.W, pady=5)
+        ttk.Entry(self.frame, textvariable=self.password_var, show="*", font=("Arial", 12), width=30).grid(row=3,column=1,padx=5,pady=5)
 
-        # Configuración del estilo
+        # Botones
         style = ttk.Style()
-        style.configure("TButton", font=("Arial", 12, "bold"), padding=10, width=20)
+        style.configure("Login.TButton", font=("Arial", 12, "bold"), padding=10)
 
-    def abrir_sistema(self):
-        # Cerrar ventana de inicio y abrir el sistema principal
-        self.root.destroy()
-        main_root = tk.Tk()
-        EventosApp(main_root)
-        main_root.mainloop()
+        self.acceder_button = ttk.Button(self.frame, text="Conectar", command=self.conectar, style="Login.TButton")
+        self.acceder_button.grid(row=4, column=0, columnspan=2, pady=20, sticky="ew")
 
-# Clase principal del sistema (mantener intacta)
+        self.salir_button = ttk.Button(self.frame, text="Salir", command=self.root.quit, style="Login.TButton")
+        self.salir_button.grid(row=5, column=0, columnspan=2, pady=10, sticky="ew")
+
+    def conectar(self):
+        try:
+            self.conexion = mysql.connector.connect(
+                host=self.host_var.get(),
+                user=self.user_var.get(),
+                password=self.password_var.get(),
+                database="g07",
+                autocommit=False
+            )
+            messagebox.showinfo("Éxito", "Conexión exitosa")
+            self.success = True
+            self.root.destroy()
+            main_root = tk.Tk()
+            EventosApp(main_root, self.conexion)
+            main_root.mainloop()
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"Error de conexión: {err}")
+
+
 class EventosApp:
-    def __init__(self, root):
+    def __init__(self, root, conexion):
         self.root = root
         self.root.title("Sistema de Gestión de Eventos (Modo Temporal)")
 
-        # Configuración de la conexión con autocommit=False para manejar transacciones
-        self.conexion = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",  # la contraseña de uds
-            database="g07",
-            autocommit=False
-        )
+        # Usar la conexión pasada desde el login
+        self.conexion = conexion
         self.cursor = self.conexion.cursor()
 
         # Iniciar transacción
@@ -69,8 +85,6 @@ class EventosApp:
         self.tematica_var = tk.StringVar()
         self.descripcion_var = tk.StringVar()
         self.valor_var = tk.StringVar()
-
-
 
         # Crear campos de entrada
         ttk.Label(self.frame, text="Código:", font=("Times New Roman", 12, "bold")).grid(row=0, column=0, sticky=tk.W)
@@ -108,35 +122,55 @@ class EventosApp:
 
         # Estilo de los botones
         style = ttk.Style()
-        style.configure("TButton",
-                        font=("Arial", 10, "bold"),
-                        relief="raised",
-                        padding=10,
-                        width=12)
-        style.configure("TButton:hover",
-                        background="#4CAF50",
-                        foreground="white")
-        style.configure("TButton:active",
-                        background="#45a049",
-                        foreground="white")
-
-        # Botones de control de transacción
-        self.save_button = ttk.Button(self.frame, text="Guardar Cambios", command=self.commit_cambios,
-                                      style='Accent.TButton')
-        self.save_button.grid(row=7, column=0, columnspan=2, pady=10, sticky="ew")
-
-        self.discard_button = ttk.Button(self.frame, text="Descartar Cambios", command=self.descartar_cambios,
-                                         style='Accent.TButton')
-        self.discard_button.grid(row=7, column=2, columnspan=2, pady=10, sticky="ew")
-
-        # Estilo de los botones de acción
-        style.configure("Accent.TButton",
+        style.configure("Save.TButton",
                         font=("Arial", 12, "bold"),
-                        background="#008CBA",
-                        foreground="white",
-                        padding=15)
-        style.map("Accent.TButton",
-                  background=[["active", "#006f8f"]])
+                        padding=10,
+                        width=20)
+        style.map("Save.TButton",
+                  background=[('active', '#4CAF50'), ('!active', '#4CAF50')],
+                  foreground=[('active', 'white'), ('!active', 'white')])
+
+        # Configurar estilo para el botón de descartar
+        style.configure("Discard.TButton",
+                        font=("Arial", 12, "bold"),
+                        padding=10,
+                        width=20)
+        style.map("Discard.TButton",
+                  background=[('active', '#f44336'), ('!active', '#f44336')],
+                  foreground=[('active', 'white'), ('!active', 'white')])
+
+        # Frame para los botones con padding
+        button_frame = ttk.Frame(self.frame)
+        button_frame.grid(row=7, column=0, columnspan=4, pady=20, sticky="ew")
+        button_frame.grid_columnconfigure(0, weight=1)
+        button_frame.grid_columnconfigure(1, weight=1)
+
+        # Botones de control de transacción con nuevos estilos
+        self.save_button = tk.Button(button_frame,
+                                     text="Guardar Cambios",
+                                     command=self.commit_cambios,
+                                     font=("Arial", 12, "bold"),
+                                     bg="#4CAF50",
+                                     fg="white",
+                                     padx=20,
+                                     pady=10)
+        self.save_button.grid(row=0, column=0, padx=10, sticky="ew")
+
+        self.discard_button = tk.Button(button_frame,
+                                        text="Descartar Cambios",
+                                        command=self.descartar_cambios,
+                                        font=("Arial", 12, "bold"),
+                                        bg="#f44336",
+                                        fg="white",
+                                        padx=20,
+                                        pady=10)
+        self.discard_button.grid(row=0, column=1, padx=10, sticky="ew")
+
+        # Configurar hover effect
+        self.save_button.bind("<Enter>", lambda e: e.widget.configure(bg="#45a049"))
+        self.save_button.bind("<Leave>", lambda e: e.widget.configure(bg="#4CAF50"))
+        self.discard_button.bind("<Enter>", lambda e: e.widget.configure(bg="#da190b"))
+        self.discard_button.bind("<Leave>", lambda e: e.widget.configure(bg="#f44336"))
 
         # Tabla de eventos
         self.tree = ttk.Treeview(self.frame,
@@ -288,4 +322,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = InicioApp(root)
     root.mainloop()
-    
