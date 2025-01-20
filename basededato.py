@@ -37,23 +37,25 @@ class EventosApp:
         self.valor_var = tk.StringVar()
 
         # Crear campos de entrada
-        ttk.Label(self.frame, text="Código:", font=("Arial", 10, "bold")).grid(row=0, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.codigo_var, font=("Arial", 10), width=20).grid(row=0, column=1, padx=5, pady=5)
+        # Crear campos de entrada
+        ttk.Label(self.frame, text="Código:", font=("Times New Roman", 12, "bold")).grid(row=0, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.codigo_var, font=("Times New Roman", 12), width=20).grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Fecha (YYYY-MM-DD):", font=("Arial", 10, "bold")).grid(row=1, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.fecha_var, font=("Arial", 10), width=20).grid(row=1, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Fecha (YYYY-MM-DD):", font=("Times New Roman", 12, "bold")).grid(row=1, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.fecha_var, font=("Times New Roman", 12), width=20).grid(row=1, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Ubicación:", font=("Arial", 10, "bold")).grid(row=2, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.ubicacion_var, font=("Arial", 10), width=20).grid(row=2, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Ubicación:", font=("Times New Roman", 12, "bold")).grid(row=2, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.ubicacion_var, font=("Times New Roman", 12), width=20).grid(row=2, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Temática:", font=("Arial", 10, "bold")).grid(row=3, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.tematica_var, font=("Arial", 10), width=20).grid(row=3, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Temática:", font=("Times New Roman", 12, "bold")).grid(row=3, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.tematica_var, font=("Times New Roman", 12), width=20).grid(row=3, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Descripción:", font=("Arial", 10, "bold")).grid(row=4, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.descripcion_var, font=("Arial", 10), width=20).grid(row=4, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Descripción:", font=("Times New Roman", 12, "bold")).grid(row=4, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.descripcion_var, font=("Times New Roman", 12), width=20).grid(row=4, column=1, padx=5, pady=5)
 
-        ttk.Label(self.frame, text="Valor Total:", font=("Arial", 10, "bold")).grid(row=5, column=0, sticky=tk.W)
-        ttk.Entry(self.frame, textvariable=self.valor_var, font=("Arial", 10), width=20).grid(row=5, column=1, padx=5, pady=5)
+        ttk.Label(self.frame, text="Valor Total:", font=("Times New Roman", 12, "bold")).grid(row=5, column=0, sticky=tk.W)
+        ttk.Entry(self.frame, textvariable=self.valor_var, font=("Times New Roman", 12), width=20).grid(row=5, column=1, padx=5, pady=5)
+
 
         # Botones CRUD alineados a la derecha de los campos de entrada
         self.create_button = ttk.Button(self.frame, text="Crear", command=self.crear_evento, style="TButton")
